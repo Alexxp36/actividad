@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.miempresa.lab12actividad.model.Curso
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,9 @@ class CursosViewModel : ViewModel() {
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private var listenerRegistration: ListenerRegistration? = null
+    private var currentUserId: String? = null
+
     init {
         loadCursos()
     }
@@ -30,10 +34,17 @@ class CursosViewModel : ViewModel() {
     fun loadCursos() {
         val userId = auth.currentUser?.uid ?: return
 
+        // Si el usuario cambió, cancelar el listener anterior
+        if (currentUserId != userId) {
+            listenerRegistration?.remove()
+            currentUserId = userId
+            _cursos.value = emptyList() // Limpiar cursos anteriores
+        }
+
         _isLoading.value = true
         _error.value = null
 
-        firestore.collection("cursos")
+        listenerRegistration = firestore.collection("cursos")
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
@@ -57,6 +68,11 @@ class CursosViewModel : ViewModel() {
                     _isLoading.value = false
                 }
             }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        listenerRegistration?.remove()
     }
 
     fun addCurso(nombre: String, codigo: String, creditos: Int, descripcion: String) {

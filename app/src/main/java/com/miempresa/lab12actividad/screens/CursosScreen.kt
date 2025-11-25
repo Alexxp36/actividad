@@ -29,6 +29,11 @@ fun CursosScreen(
     var showDeleteDialog by remember { mutableStateOf<Curso?>(null) }
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    // Recargar cursos cuando se navega a esta pantalla
+    LaunchedEffect(Unit) {
+        cursosViewModel.loadCursos()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
