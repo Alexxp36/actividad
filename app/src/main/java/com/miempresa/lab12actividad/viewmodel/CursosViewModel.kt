@@ -30,40 +30,33 @@ class CursosViewModel : ViewModel() {
     fun loadCursos() {
         val userId = auth.currentUser?.uid ?: return
 
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _error.value = null
+        _isLoading.value = true
+        _error.value = null
 
-                firestore.collection("cursos")
-                    .whereEqualTo("userId", userId)
-                    .addSnapshotListener { snapshot, e ->
-                        if (e != null) {
-                            _error.value = e.message
-                            _isLoading.value = false
-                            return@addSnapshotListener
-                        }
+        firestore.collection("cursos")
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    _error.value = e.message
+                    _isLoading.value = false
+                    return@addSnapshotListener
+                }
 
-                        if (snapshot != null) {
-                            val cursosList = snapshot.documents.mapNotNull { doc ->
-                                Curso(
-                                    id = doc.id,
-                                    nombre = doc.getString("nombre") ?: "",
-                                    codigo = doc.getString("codigo") ?: "",
-                                    creditos = doc.getLong("creditos")?.toInt() ?: 0,
-                                    descripcion = doc.getString("descripcion") ?: "",
-                                    userId = doc.getString("userId") ?: ""
-                                )
-                            }
-                            _cursos.value = cursosList
-                            _isLoading.value = false
-                        }
+                if (snapshot != null) {
+                    val cursosList = snapshot.documents.mapNotNull { doc ->
+                        Curso(
+                            id = doc.id,
+                            nombre = doc.getString("nombre") ?: "",
+                            codigo = doc.getString("codigo") ?: "",
+                            creditos = doc.getLong("creditos")?.toInt() ?: 0,
+                            descripcion = doc.getString("descripcion") ?: "",
+                            userId = doc.getString("userId") ?: ""
+                        )
                     }
-            } catch (e: Exception) {
-                _error.value = e.message
-                _isLoading.value = false
+                    _cursos.value = cursosList
+                    _isLoading.value = false
+                }
             }
-        }
     }
 
     fun addCurso(nombre: String, codigo: String, creditos: Int, descripcion: String) {
