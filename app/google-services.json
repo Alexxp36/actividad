@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615064161888",
+    "project_id": "actividad-23184",
+    "storage_bucket": "actividad-23184.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615064161888:android:9966a0012dea1f51263d05",
+        "android_client_info": {
+          "package_name": "com.miempresa.lab12actividad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlaqtvGINJl9VG0iX4c-fbVx5VsLQLLuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
